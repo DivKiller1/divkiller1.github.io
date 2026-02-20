@@ -20,7 +20,7 @@
 All theory notes and concepts related to Containerization and DevOps can be accessed here:
 
 🔗 **Theory Repository**  
-👉 [The Theory Content](https://github.com/DivKiller1/)
+👉 [The Theory Content](https://divkiller1.github.io/Containerization_and_DevOpsTheory/)
 
 ---
 
