@@ -20,7 +20,7 @@
 All theory notes and concepts related to Containerization and DevOps can be accessed here:
 
 🔗 **Theory Repository**  
-👉 https://github.com/DivKiller1/
+👉 [The Theory Content](https://github.com/DivKiller1/)
 
 ---
 
@@ -29,7 +29,7 @@ All theory notes and concepts related to Containerization and DevOps can be acce
 All practical lab experiments are deployed and accessible below:
 
 🌐 **Live Lab Link**  
-👉 https://divkiller1.github.io/Containerization_and_DevOpsLab/
+👉 [The Lab Content](https://divkiller1.github.io/Containerization_and_DevOpsLab/)
 
 ---
 
@@ -58,6 +58,6 @@ All practical lab experiments are deployed and accessible below:
 
 **Divyanshu Gaur**  
 SAP ID: 500121752  
-GitHub: https://github.com/DivKiller1/
+GitHub: [DivKiller1](https://github.com/DivKiller1/)
 
 ---
