@@ -1,4 +1,4 @@
-<h1 align="center">📦 Containerization & DevOps</h1>
+<h1 align="center">Containerization & DevOps</h1>
 
 <p align="center">
   <b>Academic Repository for Theory & Lab Work</b><br>
@@ -15,24 +15,32 @@
 
 ---
 
-## 📘 Theory Resources
+## Theory Resources
 
 All theory notes and concepts related to Containerization and DevOps can be accessed here:
 
-🔗 **Theory Repository**  
+**Theory Repository**  
 👉 [The Theory Content](https://divkiller1.github.io/Containerization_and_DevOpsTheory/)
 
 ---
 
-## 🧪 Lab Work (GitHub Pages)
+## Lab Work (GitHub Pages)
 
 All practical lab experiments are deployed and accessible below:
 
-🌐 **Live Lab Link**  
+**Live Lab Link**  
 👉 [The Lab Content](https://divkiller1.github.io/Containerization_and_DevOpsLab/)
 
 ---
 
+## Assignment-1
+
+Assignment-1 for Containerization and Devops:
+
+**Assignment-1**  
+👉 [Drophost](https://github.com/DivKiller1/drophost/drophost.md)
+
+---
 ## 🚀 Topics Covered
 
 - 🐳 Docker Fundamentals  
