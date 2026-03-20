@@ -38,7 +38,7 @@ All practical lab experiments are deployed and accessible below:
 Assignment-1 for Containerization and Devops:
 
 **Assignment-1**  
-👉 [Drophost](https://github.com/DivKiller1/drophost/blob/main/drophost.md)
+👉 [Drophost](https://divkiller1.github.io/drophost/drophost.html)
 
 ---
 ## 🚀 Topics Covered
