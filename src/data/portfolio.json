@@ -1,0 +1,196 @@
+{
+  "personalInfo": {
+    "name": "Divyanshu Gaur",
+    "title": "Cloud, DevOps & Backend Engineer",
+    "tagline": "Building scalable, resilient, and intelligent systems—from autonomous CI/CD pipelines to real-time DDoS detection and cloud-native architectures.",
+    "location": "Dehradun, Uttarakhand, India",
+    "education": {
+      "degree": "B.Tech in Computer Science (Cloud Computing & Virtualization)",
+      "institution": "UPES",
+      "timeline": "2023 – 2027"
+    },
+    "achievements": [
+      "GATE 2026 Qualified – Computer Science & Information Technology",
+      "AWS Academy Graduate (Cloud Foundations, Architecting, Cloud Operations)",
+      "Student Lead – Smart India Hackathon (Internal Round, 1,524+ participants)"
+    ],
+    "profiles": {
+      "github": "https://github.com/DivKiller1"
+    }
+  },
+  "coreDomains": [
+    "Cloud Computing & Distributed Systems",
+    "DevOps, SRE & Infrastructure as Code",
+    "High-Performance Backend Engineering",
+    "AI Systems & Intelligent Workflow Orchestration",
+    "Cybersecurity & Network Traffic Analysis"
+  ],
+  "skills": {
+    "languages": ["Python", "JavaScript", "TypeScript", "Java", "SQL", "Bash"],
+    "backend": ["FastAPI", "Flask", "Node.js", "Express.js", "REST APIs", "Microservices", "Auth Systems (JWT/OAuth)"],
+    "frontend": ["React", "Next.js", "HTML5", "CSS3", "Tailwind CSS", "Recharts"],
+    "databases": ["MongoDB", "PostgreSQL", "MySQL", "Redis"],
+    "cloudInfrastructure": ["AWS (EC2, S3, Lambda, IAM, VPC)", "Multi-cloud Architecture Design", "Terraform", "Linux Administration"],
+    "devopsContainers": ["Docker", "Docker Compose", "Kubernetes", "Jenkins", "GitHub Actions"],
+    "observability": ["Prometheus", "Grafana", "Log Analysis", "Metrics & Alerting Systems"],
+    "networkingSecurity": ["Webhook Security (HMAC)", "Rate Limiting", "RBAC", "Security Hardening"],
+    "aiMl": ["PyTorch", "LSTM Networks", "LangGraph", "LLM Orchestration (Groq/Llama)", "Autonomous Agents"]
+  },
+  "experience": [
+    {
+      "company": "Ekta Telecommunications Pvt. Ltd.",
+      "role": "Information Technology Intern",
+      "timeline": "Jan 2026 – Present",
+      "highlights": [
+        "Architected and deployed enterprise dashboards, procurement pipelines, and vendor/payment management modules.",
+        "Owned requirement gathering, site survey workflows, and full-cycle system deployment.",
+        "Managed production debugging, infrastructure monitoring, and internal business application uptime."
+      ]
+    },
+    {
+      "company": "Indian Hemp Store",
+      "role": "Backend Developer Intern",
+      "timeline": "Jun 2025 – Aug 2025",
+      "highlights": [
+        "Engineered Node.js backend infrastructure and optimized RESTful API endpoints for performance.",
+        "Streamlined deployment workflows and resolved critical bottlenecks during production debugging sessions."
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": "autonomous-cicd",
+      "title": "Autonomous CI/CD — AI-Driven Vulnerability Remediation Platform",
+      "featured": true,
+      "github": "https://github.com/DivKiller1/autonomous-cicd",
+      "techStack": ["FastAPI", "LangGraph", "MongoDB", "Redis", "Groq (Llama 3.1)", "Docker", "Prometheus", "Grafana"],
+      "domains": ["AI Agents", "DevOps", "Cloud Computing", "Software Engineering"],
+      "status": "Prototype — functional pipeline, not yet running against live production repositories at scale",
+      "description": "An end-to-end platform that detects code vulnerabilities, generates patches with an LLM, validates them in isolated environments, and ships fixes through a human-in-the-loop approval gate — with full pipeline observability.",
+      "features": [
+        "10-node LangGraph state machine handling analysis, confidence grading, patch generation, parallel patch application, and memory updates — with crash-safe checkpointing at every stage.",
+        "Confidence grading engine that scores each fix on issue complexity, language-specific historical success rate, and pattern similarity before deciding whether to auto-generate a patch or escalate to a human.",
+        "Parallel patch application via LangGraph's Send API, splitting multi-file diffs into concurrent per-file workers instead of applying them serially.",
+        "Redis-backed webhook deduplication (1-hour TTL per commit SHA) to discard duplicate GitHub webhook retries before they trigger redundant pipeline runs.",
+        "Prompt-injection screening on vulnerability context before it reaches the LLM, plus HMAC-verified webhooks and JWT-scoped API endpoints.",
+        "Auto-provisioned Prometheus/Grafana stack tracking run duration percentiles, confidence scores, and patch failure rates per language out of the box."
+      ],
+      "codeSnippets": [
+        {
+          "label": "Pipeline graph definition (graph.py) — conditional routing between analysis, prediction, human approval, and parallel patch application",
+          "language": "python",
+          "code": "def route_after_prediction(state: PipelineState):\n    \"\"\"Routes based on prediction result.\"\"\"\n    if state.get(\"pipeline_status\") == \"ESCALATED\":\n        return \"human_gate\"\n    return \"fix_generator\"\n\ndef build_pipeline_graph():\n    workflow = StateGraph(PipelineState)\n    workflow.add_node(\"analyzer\", analyzer)\n    workflow.add_node(\"prediction_engine\", prediction_engine)\n    workflow.add_node(\"fix_generator\", fix_generator)\n    workflow.add_node(\"human_approval_gate\", human_approval_gate)\n    workflow.add_node(\"patch_applier\", patch_applier)\n    workflow.add_node(\"file_worker\", file_worker)\n    workflow.add_node(\"patch_join\", patch_join)\n    workflow.add_node(\"evaluator\", evaluator)\n    workflow.add_node(\"memory_updater\", memory_updater)\n    workflow.add_node(\"human_gate\", human_gate)\n\n    workflow.add_edge(START, \"analyzer\")\n    workflow.add_conditional_edges(\"analyzer\", route_after_analyzer,\n        {\"fix_generator\": \"prediction_engine\", \"__end__\": END})\n    workflow.add_conditional_edges(\"prediction_engine\", route_after_prediction,\n        {\"fix_generator\": \"fix_generator\", \"human_gate\": \"human_gate\"})\n    workflow.add_conditional_edges(\"patch_applier\", patch_dispatcher,\n        [\"file_worker\", \"evaluator\"])\n\n    memory = MemorySaver()\n    return workflow.compile(checkpointer=memory)"
+        },
+        {
+          "label": "Confidence grader (grader.py) — weighted 3×4 scoring matrix with dynamic weight adjustment from historical fix outcomes",
+          "language": "python",
+          "code": "class WeightOptimizer:\n    \"\"\"Dynamically adjusts grading weights based on historical success rates.\"\"\"\n    @staticmethod\n    def get_optimized_weights(issue_rule: str) -> np.ndarray:\n        weights = DEFAULT_WEIGHTS.copy()\n        try:\n            from mongo import get_historical_stats\n            stats = get_historical_stats()\n            rule_stats = next((s for s in stats if s[\"_id\"] == issue_rule), None)\n            if rule_stats:\n                # If this rule historically takes many iterations,\n                # trust the Confidence row less\n                if rule_stats[\"avg_iterations\"] > 2:\n                    weights[2] *= 0.8\n                if rule_stats[\"avg_confidence\"] > 0.8 and rule_stats[\"avg_iterations\"] > 3:\n                    weights[2] *= 0.5\n            optimized = weights / weights.sum()\n            return optimized.tolist()\n        except Exception:\n            return DEFAULT_WEIGHTS.tolist()\n\ndef evaluate(raw_cells, issue_rule=\"unknown\", iteration=1, weights=None):\n    scores = np.clip(np.array(raw_cells, dtype=float), 0.0, 1.0)\n    w_arr = np.array(weights) if weights is not None \\\n        else np.array(WeightOptimizer.get_optimized_weights(issue_rule))\n    # Late-iteration penalty: repeated failures reduce trust in Confidence row\n    if iteration > 1:\n        w_arr[2] *= 1.0 + (0.5 * min(iteration - 1, 4))\n        w_arr /= w_arr.sum()\n    overall = float(np.sum(scores * w_arr))\n    letter, desc = assign_grade(overall)\n    return GradeResult(overall_score=round(overall, 4), letter_grade=letter, grade_desc=desc, ...)"
+        }
+      ],
+      "metrics": {
+        "status": "Benchmarks pending — not yet run on a standardized test set",
+        "plannedMetrics": ["Patch success rate", "Average patch generation time", "Number of vulnerabilities tested against", "Pipeline run duration p50/p95/p99 (Prometheus histogram already instrumented, no recorded baseline yet)"]
+      }
+    },
+    {
+      "id": "guardian-ai",
+      "title": "Guardian AI — DDoS Detection & Mitigation System",
+      "featured": true,
+      "github": "https://github.com/DivKiller1/guardian-ai",
+      "techStack": ["Python", "Flask", "PyTorch", "LSTM", "HAProxy", "React", "Docker", "Prometheus"],
+      "domains": ["Cybersecurity", "Machine Learning", "Networking", "Observability"],
+      "status": "Prototype — full detect-and-mitigate loop runs end-to-end against simulated traffic; not deployed in front of live production infrastructure",
+      "description": "A real-time DDoS detection and mitigation system combining a feedforward classifier for attack fingerprinting with an LSTM for short-horizon risk prediction, wired directly into HAProxy for live rate-limit enforcement — plus a multi-vector attack simulator for validating detection accuracy.",
+      "features": [
+        "Dual-model detection: a 4-layer feedforward network classifies traffic into 5 attack types (DNS amplification, HTTP flood, SYN flood, UDP flood, benign) with softmax confidence, while a 2-layer LSTM predicts near-term attack risk from time-series traffic features.",
+        "Live mitigation loop: a `/mitigation/toggle` endpoint calls into a custom HAProxyController to push real rate-limit rules onto the proxy, not just log a detection.",
+        "Model loading auto-detects input/output dimensions from saved weight shapes, falling back to freshly initialized weights with a logged warning if no trained model is found.",
+        "Built-in multi-vector attack simulator (HTTP flood, Slowloris, SYN flood, UDP flood, DNS amplification, and randomized mixed attacks) with a 10-worker thread pool, used to generate the traffic the detection models are validated against.",
+        "Prometheus metrics (total detections, recent attack count, last-attack confidence) exposed on a dedicated metrics port, separate from the Flask API port."
+      ],
+      "codeSnippets": [
+        {
+          "label": "Detection models (pytorch_models.py) — feedforward classifier + LSTM risk predictor",
+          "language": "python",
+          "code": "class AttackFingerprintClassifier(nn.Module):\n    def __init__(self, input_size=15, num_classes=7):\n        super().__init__()\n        self.fc1 = nn.Linear(input_size, 128)\n        self.fc2 = nn.Linear(128, 64)\n        self.fc3 = nn.Linear(64, 32)\n        self.fc4 = nn.Linear(32, num_classes)\n        self.relu = nn.ReLU()\n        self.dropout = nn.Dropout(0.3)\n\n    def forward(self, x):\n        x = self.dropout(self.relu(self.fc1(x)))\n        x = self.dropout(self.relu(self.fc2(x)))\n        x = self.relu(self.fc3(x))\n        return self.fc4(x)\n\nclass AttackPredictionLSTM(nn.Module):\n    def __init__(self, input_size=10, hidden_size=64, num_layers=2):\n        super().__init__()\n        self.lstm = nn.LSTM(input_size, hidden_size, num_layers,\n                             batch_first=True, dropout=0.3)\n        self.fc1 = nn.Linear(hidden_size, 32)\n        self.fc2 = nn.Linear(32, 1)\n\n    def forward(self, x):\n        lstm_out, _ = self.lstm(x)\n        last_output = lstm_out[:, -1, :]\n        x = self.relu(self.fc1(last_output))\n        return self.fc2(x)"
+        },
+        {
+          "label": "Live mitigation endpoint (ai_detection_service.py) — detection result triggers a real HAProxy rate-limit change",
+          "language": "python",
+          "code": "@app.route('/mitigation/toggle', methods=['POST'])\ndef toggle_mitigation():\n    global mitigation_active\n    data = request.json\n    mitigation_active = data.get('active', not mitigation_active)\n\n    if mitigation_active:\n        # Real mitigation action: push a rate limit via HAProxy\n        haproxy.set_rate_limit(\"0.0.0.0/0\", limit=50)\n        logging.info(\"Applied global rate limit via HAProxy.\")\n    else:\n        haproxy.clear_table()\n        logging.info(\"Cleared HAProxy mitigation tables.\")\n\n    return jsonify({\n        'status': 'success',\n        'mitigation_active': mitigation_active,\n        'timestamp': datetime.now().isoformat()\n    })"
+        },
+        {
+          "label": "Attack simulator (enhanced_ddos_simulator.py) — multi-vector traffic generator used to validate detection",
+          "language": "python",
+          "code": "attack_patterns = {\n    'http_flood': self.http_flood,\n    'slowloris': self.slowloris,\n    'syn_flood': self.syn_flood,\n    'udp_flood': self.udp_flood,\n    'dns_amplification': self.dns_amplification,\n    'mixed': self.mixed_attack\n}\n\ndef start(self):\n    start_time = time.time()\n    with ThreadPoolExecutor(max_workers=10) as executor:\n        futures = [executor.submit(self.run_attack, i) for i in range(10)]\n        try:\n            while time.time() - start_time < self.duration:\n                time.sleep(1)\n        finally:\n            self.stop_event.set()\n            for future in futures:\n                future.cancel()"
+        }
+      ],
+      "metrics": {
+        "status": "Benchmarks pending — model has not been evaluated on a labeled traffic dataset for accuracy/precision/recall",
+        "plannedMetrics": ["Detection accuracy / precision / recall on labeled traffic", "Inference latency per classification", "Sustained throughput (packets or requests/sec) before detection degrades"]
+      }
+    },
+    {
+      "id": "healthcare-saas",
+      "title": "Healthcare Multi-Portal SaaS — Cloud Architecture & Platform Skeleton",
+      "featured": true,
+      "github": "https://github.com/DivKiller1/healthcare-decentralised",
+      "techStack": ["Kubernetes", "FastAPI", "Python", "Multi-cloud (AWS/Azure/GCP)", "Docker", "Terraform"],
+      "domains": ["Cloud Architecture", "Distributed Systems", "Systems Design"],
+      "status": "Designed + Prototype — full K8s manifests and a working auth service exist; most services are scaffolded, auth uses a mock user store, and Postgres storage is non-persistent",
+      "description": "A full Kubernetes-native architecture and platform skeleton for a public healthcare coordination system — connecting citizens, clinics, and government health authorities through three role-separated portals on one backend.",
+      "features": [
+        "8 independently deployable, stateless microservices (auth, user/role, facility, request, government-ops, routing, metrics, audit) each with its own Kubernetes Deployment and ClusterIP Service.",
+        "Path-based Ingress routing all eight services through a single public endpoint while preserving service-level isolation.",
+        "Multi-cloud design split by responsibility: AWS for core compute/data, Azure for identity and governance, GCP for maps and analytics.",
+        "Region-scoped RBAC across five roles (citizen, clinic, government employee, government admin, platform admin), each with explicitly scoped permissions.",
+        "Request lifecycle management with 14-day auto-expiry, demand clustering, and route planning for government field visits.",
+        "Immutable audit logging and a 'no medical records stored' design constraint — built for visibility and coordination, not clinical data."
+      ],
+      "note": "Architecture and platform skeleton stage. Real Kubernetes Deployment/Service manifests and a working FastAPI auth service exist, but the auth service currently runs against a hardcoded mock user store (not a database), and Postgres storage is non-persistent (emptyDir) — both explicitly prototype-stage, not production.",
+      "codeSnippets": [
+        {
+          "label": "auth-deployment.yaml — real K8s Deployment + Service with readiness probe and ConfigMap/Secret injection",
+          "language": "yaml",
+          "code": "apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: auth-deployment\n  namespace: backend\nspec:\n  replicas: 2\n  selector:\n    matchLabels:\n      app: auth-service\n  template:\n    metadata:\n      labels:\n        app: auth-service\n    spec:\n      containers:\n        - name: auth-service\n          image: auth-service:latest\n          ports:\n            - containerPort: 8000\n          envFrom:\n            - configMapRef:\n                name: app-config\n            - secretRef:\n                name: app-secrets\n          readinessProbe:\n            httpGet:\n              path: /health\n              port: 8000\n            initialDelaySeconds: 5\n            periodSeconds: 10\n---\napiVersion: v1\nkind: Service\nmetadata:\n  name: auth-svc\n  namespace: backend\nspec:\n  selector:\n    app: auth-service\n  ports:\n    - port: 80\n      targetPort: 8000\n  type: ClusterIP"
+        },
+        {
+          "label": "auth-service (FastAPI) — JWT issuance and verification flow; user store is a prototype mock pending DB integration",
+          "language": "python",
+          "code": "@app.post(\"/auth/login\")\ndef login(req: LoginRequest):\n    role = USERS.get(req.mobile_number)  # prototype mock store\n    if not role:\n        raise HTTPException(status_code=401, detail=\"User not registered\")\n    payload = {\n        \"mobile\": req.mobile_number,\n        \"role\": role,\n        \"exp\": datetime.datetime.utcnow() + datetime.timedelta(hours=6)\n    }\n    token = jwt.encode(payload, SECRET, algorithm=ALGORITHM)\n    return {\"message\": \"Login successful\", \"token\": token, \"role\": role}\n\n@app.post(\"/auth/verify\")\ndef verify(token: str):\n    try:\n        decoded = jwt.decode(token, SECRET, algorithms=[ALGORITHM])\n        return {\"valid\": True, \"mobile\": decoded[\"mobile\"], \"role\": decoded[\"role\"]}\n    except jwt.ExpiredSignatureError:\n        raise HTTPException(status_code=401, detail=\"Token expired\")\n    except jwt.InvalidTokenError:\n        raise HTTPException(status_code=401, detail=\"Invalid token\")"
+        }
+      ]
+    },
+    {
+      "id": "dazai-launcher",
+      "title": "Dazai — Voice-Activated Workflow Launcher",
+      "featured": false,
+      "github": "https://github.com/DivKiller1/DAZAI",
+      "techStack": ["Python", "pyttsx3", "PyAutoGUI", "Windows Automation", "Ollama", "Claude CLI"],
+      "domains": ["Developer Tooling", "Automation", "Desktop Systems"],
+      "status": "Production — runs daily as a personal dev-workflow tool",
+      "description": "A voice, clap, and hotkey-activated automation tool that sets up a full dev environment on command — launching Spotify, VS Code, and a dual-pane terminal pre-loaded with a local Ollama model and Claude Code.",
+      "features": [
+        "Multi-trigger activation: wake-phrase detection, clap detection, and a global Ctrl+Shift+M hotkey.",
+        "One command boots the workspace: focus playlist on Spotify, VS Code, and a Windows Terminal split between an Ollama model and Claude Code.",
+        "Text-to-speech feedback via pyttsx3 with configurable voice, rate, and volume.",
+        "\"Deafen/undeafen\" mode to suspend voice-command listening during normal conversation without closing the app.",
+        "Runs persistently via Windows Startup integration with batch-script controls for start, stop, and restart."
+      ],
+      "codeSnippets": [
+        {
+          "label": "Workspace launcher (Dazai.py) — voice feedback, cascading fallbacks for launching VS Code, and a split-pane terminal with a local model + Claude Code",
+          "language": "python",
+          "code": "def start_dazai(skip_vscode=False):\n    speak(\"Dazai online. A new day, another series of mundane tasks, no?\")\n\n    if not skip_vscode:\n        speak(\"Launching VS Code\")\n        vscode_path = get_vscode_path()\n        try:\n            subprocess.Popen([vscode_path], shell=False,\n                              creationflags=subprocess.CREATE_NO_WINDOW)\n        except Exception as e:\n            print(f\"Failed to launch VS Code with path '{vscode_path}': {e}\")\n            os.system(\"start code\")\n\n    speak(\"Loading your focus playlist on Spotify\")\n    open_spotify_and_play()\n\n    speak(\"Initializing terminal with your AI companions.\")\n    terminal_cmd = [\n        'wt',\n        'new-tab', '-p', 'Command Prompt', 'cmd', '/k',\n        'echo Starting Ollama... && ollama run qwen2.5:3b',\n        ';',\n        'new-tab', '-p', 'Command Prompt', 'cmd', '/k',\n        'echo Starting Claude Code... && timeout /t 3 && claude'\n    ]\n    subprocess.Popen(terminal_cmd, shell=False,\n                      creationflags=subprocess.CREATE_NO_WINDOW)\n\n    speak(\"All systems are ready. Let's get to work.\")"
+        }
+      ]
+    }
+  ],
+  "interests": [
+    "Site Reliability Engineering (SRE)",
+    "Observability & Distributed Systems",
+    "DevSecOps & AI for Cybersecurity",
+    "Digital Health Systems",
+    "Robotics & Quantum Technologies"
+  ]
+}
